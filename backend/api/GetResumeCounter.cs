@@ -31,9 +31,8 @@ namespace Company.Function
             [CosmosDB(
                 databaseName:"AzureResume", 
                 containerName : "Counter", 
-                Connection = "AzureResumeConnectionString",
-                Id = "1", 
-                PartitionKey = "1")] out Counter  updatedCounter,
+                Connection = "AzureResumeConnectionString"
+              )] out Counter  updatedCounter,
 
             ILogger log)
         {
@@ -45,7 +44,7 @@ namespace Company.Function
             
  //Return the updated document as JSON
 
-            var jasonToRetun = JsonConvert.SerializeObject(counter);
+            var jasonToRetun = JsonConvert.SerializeObject(updatedCounter);
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
                 Content = new StringContent(jasonToRetun, Encoding.UTF8, "application/json")
