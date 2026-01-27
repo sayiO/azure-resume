@@ -2,4 +2,5 @@
 My own azure resume, showing how to use a bit of Azure resources
 
 ## First steps 
-Frontend folder contains the website.
+-Frontend folder contains the website.
+-main.js contains visitor counter code.

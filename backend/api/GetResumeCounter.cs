@@ -1,38 +1,56 @@
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Microsoft.Azure.Functions.Worker;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 
-
-#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Company.Function
-#pragma warning restore IDE0130 // Namespace does not match folder structure damn this is annoying 
 {
     public static class GetResumeCounter
     {
         [FunctionName("GetResumeCounter")]
-        public static HttpResponseMessage Run(
+        public static  HttpResponseMessage Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            [CosmosDBInput(databaseName:"AzureResume", containerName:"Counter", Connection = "AzureResumeConnectionString", Id = "1", PartitionKey ="1")] Counter counter,
-            [CosmosDBInput(databaseName:"AzureResume", containerName:"Counter", Connection = "AzureResumeConnectionString", Id = "1", PartitionKey ="1")] out Counter updatedCounter,
+
+            //Input binding: fetch the single document by id + partition key
+            [CosmosDB(
+                databaseName:"AzureResume", 
+                containerName : "Counter", 
+                Connection = "AzureResumeConnectionString", 
+                Id = "1", 
+                PartitionKey = "1")] Counter counter,
+
+             // Output binding: write the updated entity   
+            [CosmosDB(
+                databaseName:"AzureResume", 
+                containerName : "Counter", 
+                Connection = "AzureResumeConnectionString",
+                Id = "1", 
+                PartitionKey = "1")] out Counter  updatedCounter,
+
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
+                
+                updatedCounter = counter;
+                updatedCounter.Count += 1;
 
-            updatedCounter = counter;
-            updatedCounter.Count += 1;
-            var jasonToReturn = JsonConvert.SerializeObject(counter);
+            
+ //Return the updated document as JSON
 
-
+            var jasonToRetun = JsonConvert.SerializeObject(counter);
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
-                Content = new StringContent(jasonToReturn, System.Text.Encoding.UTF8, "application/json")
+                Content = new StringContent(jasonToRetun, Encoding.UTF8, "application/json")
             };
         }
+        
     }
 }
