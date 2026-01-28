@@ -44,10 +44,10 @@ namespace Company.Function
             
  //Return the updated document as JSON
 
-            var jasonToRetun = JsonConvert.SerializeObject(updatedCounter);
+            var jasonToReturn = JsonConvert.SerializeObject(updatedCounter);
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
-                Content = new StringContent(jasonToRetun, Encoding.UTF8, "application/json")
+                Content = new StringContent(jasonToReturn, Encoding.UTF8, "application/json")
             };
         }
         
